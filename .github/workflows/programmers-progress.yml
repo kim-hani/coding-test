@@ -1,0 +1,36 @@
+name: Programmers progress
+
+on:
+  push:
+    branches: [main]
+    paths-ignore: ["progress/**"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: programmers-progress
+  cancel-in-progress: false
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Render progress card
+        run: python3 .github/scripts/programmers_progress.py .
+
+      - name: Commit card
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add progress/programmers.svg
+          if git diff --cached --quiet; then
+            echo "No change"
+            exit 0
+          fi
+          git commit -m "Update Programmers progress card"
+          git pull --rebase origin main
+          git push origin HEAD:main
