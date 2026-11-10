@@ -3,10 +3,12 @@
 Two layouts are counted:
   - legacy:       src/main/java/programmers/Lv{n}/{title}.java
   - BaekjoonHub:  프로그래머스/{level}/{id}. {title}/   (level is "2" or "lv2")
-The same problem in both layouts is counted once (titles compared without spaces).
+The same problem in both layouts is counted once (titles compared without spaces,
+after NFKC so BaekjoonHub's full-width "（1）" matches a legacy "(1)").
 """
 import re
 import sys
+import unicodedata
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from xml.sax.saxutils import escape
@@ -18,7 +20,7 @@ LEVEL_COLORS = ["#9ca3af", "#5ed3f3", "#4ade80", "#f8d847", "#fb923c", "#fe428e"
 
 
 def normalize(title):
-    return re.sub(r"\s+", "", title).lower()
+    return re.sub(r"\s+", "", unicodedata.normalize("NFKC", title)).lower()
 
 
 def level_of(name):
