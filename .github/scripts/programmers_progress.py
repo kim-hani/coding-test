@@ -31,17 +31,18 @@ def level_of(name):
 def collect():
     solved = {}  # normalized title -> level
 
-    legacy = ROOT / "src" / "main" / "java" / "programmers"
-    if legacy.is_dir():
-        for f in legacy.glob("*/*.java"):
-            solved.setdefault(normalize(f.stem), level_of(f.parent.name))
-
+    # BaekjoonHub first: its level comes from Programmers, legacy folders were sorted by hand.
     hub = ROOT / "프로그래머스"
     if hub.is_dir():
         for level_dir in (d for d in hub.iterdir() if d.is_dir()):
             for problem in (d for d in level_dir.iterdir() if d.is_dir()):
                 title = re.sub(r"^\d+\.\s*", "", problem.name)
                 solved.setdefault(normalize(title), level_of(level_dir.name))
+
+    legacy = ROOT / "src" / "main" / "java" / "programmers"
+    if legacy.is_dir():
+        for f in legacy.glob("*/*.java"):
+            solved.setdefault(normalize(f.stem), level_of(f.parent.name))
 
     return solved
 
